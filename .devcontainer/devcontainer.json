@@ -1,0 +1,27 @@
+{
+  "name": "ros2-humble-dev",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "ros2",
+  "workspaceFolder": "/home/dev/ros2_ws",
+  "remoteUser": "dev",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode-remote.remote-wsl",
+        "ms-iot.vscode-ros",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "tamasfe.even-better-toml",
+        "twxs.cmake",
+        "ms-vscode.cmake-tools",
+        "github.vscode-github-actions"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "python.defaultInterpreterPath": "/usr/bin/python3"
+      }
+    }
+  },
+  "postCreateCommand": "bash -lc 'source ~/.bashrc && uv --version && gh --version && rahelp || true'"
+}

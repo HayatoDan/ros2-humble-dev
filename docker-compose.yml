@@ -1,0 +1,38 @@
+services:
+  ros2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ros2-humble-dev
+    network_mode: host
+    ipc: host
+    stdin_open: true
+    tty: true
+    privileged: true
+
+    environment:
+      DISPLAY: ${DISPLAY}
+      WAYLAND_DISPLAY: ${WAYLAND_DISPLAY}
+      XDG_RUNTIME_DIR: ${XDG_RUNTIME_DIR}
+      PULSE_SERVER: ${PULSE_SERVER}
+      QT_X11_NO_MITSHM: "1"
+      LIBGL_ALWAYS_INDIRECT: "0"
+      ROS_LOCALHOST_ONLY: "0"
+      RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
+
+    volumes:
+      - ./ros2_ws:/home/dev/ros2_ws
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ${XDG_RUNTIME_DIR}:${XDG_RUNTIME_DIR}
+      - /mnt/wslg:/mnt/wslg
+      - /dev/input:/dev/input
+
+    devices:
+      - /dev/dri:/dev/dri
+
+    group_add:
+      - video
+      - input
+
+    working_dir: /home/dev/ros2_ws
+    command: /bin/bash
