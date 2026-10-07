@@ -63,7 +63,26 @@ docker exec -it ros2-humble-dev bash
 ## 開発の流れ
 
 ### パッケージ作成
-新規パッケージの作成やcloneはWSL2側で行う．
+新規パッケージの作成はコンテナ側で行う．
+```bash
+cd ~/docker_work/ros2-humble-dev
+docker compose up -d
+docker exec -it ros2-humble-dev bash
+```
+後に
+```bash
+cd src
+ros2 pkg create [package_name]
+cd [package_name]
+uv init . --lib --python-preference only-system
+uv venv --system-site-packages
+```
+詳細は
+https://qiita.com/GesonAnko/items/510eeade1f8ada302b9b
+
+
+### clone
+cloneはWSL2側で行う．
 具体的には
 `ros2-humble-dev/ros2_ws/src`
 内に作成/cloneする．
