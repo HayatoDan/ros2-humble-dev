@@ -22,6 +22,7 @@ services:
 
     volumes:
       - ./ros2_ws:/home/dev/ros2_ws
+      - codex-home:/home/dev/.codex
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ${XDG_RUNTIME_DIR}:${XDG_RUNTIME_DIR}
       - /mnt/wslg:/mnt/wslg
@@ -36,3 +37,6 @@ services:
 
     working_dir: /home/dev/ros2_ws
     command: /bin/bash
+
+volumes:
+  codex-home:

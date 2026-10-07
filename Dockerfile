@@ -66,6 +66,19 @@ RUN mkdir -p -m 755 /etc/apt/keyrings && \
     apt-get update && apt-get install -y gh && \
     rm -rf /var/lib/apt/lists/*
 
+# Node.js + Codex CLI
+ARG NODE_MAJOR=22
+ARG CODEX_VERSION=latest
+
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR}.x | bash - && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends nodejs && \
+    npm install -g "@openai/codex@${CODEX_VERSION}" && \
+    node --version && \
+    npm --version && \
+    codex --version && \
+    rm -rf /var/lib/apt/lists/*
+
 # rosdep init
 RUN rosdep init || true
 
@@ -75,6 +88,10 @@ RUN groupadd --gid ${USER_GID} ${USERNAME} && \
     usermod -aG sudo ${USERNAME} && \
     echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME}
 
+# Prepare Codex home
+RUN mkdir -p /home/${USERNAME}/.codex && \
+    chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/.codex
+
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 
@@ -82,8 +99,12 @@ WORKDIR /home/${USERNAME}
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # ros2-aliases: install under $HOME/.local
+# Ubuntu 22.04 coreutils does not support `cp --update=none`,
+# so replace it with the equivalent `cp -n`.
 RUN mkdir -p "$HOME/.local" && \
-    git clone https://github.com/kimushun1101/ros2-aliases.git "$HOME/.local/ros2-aliases"
+    git clone https://github.com/kimushun1101/ros2-aliases.git "$HOME/.local/ros2-aliases" && \
+    sed -i 's/cp --update=none /cp -n /' \
+      "$HOME/.local/ros2-aliases/ros2_aliases.bash"
 
 # Shell setup
 RUN { \
